@@ -1,5 +1,5 @@
 {
-  "_comment": "Sample static 'DB' — robot registry + locations. This is the data that lives in Supabase. It is intentionally static and does NOT contain live status; pull that from the live RPi and robot API. The app falls back to this file when Supabase env vars are not configured.",
+  "_comment": "Sample static seed — robot registry + locations. Mirrors the data seeded into Supabase. Static and status-free: live status comes from the Robot Status API (/heartbeat, /telemetry). The app falls back to this file when Supabase env vars are not set. NOTE: a third robot with a different sensor schema is introduced by the interviewer mid-session; it is intentionally NOT seeded here.",
   "properties": [
     { "id": "prop-aspen", "name": "Aspen Ridge", "address": "1200 Summit Way" },
     { "id": "prop-cedar", "name": "Cedar Hollow", "address": "55 Old Mill Rd" }
@@ -10,11 +10,10 @@
       "name": "Scout",
       "propertyId": "prop-aspen",
       "components": {
-        "robot": { "id": "go2-aspen-a", "source": "robot-api://go2-aspen-a" },
+        "robot": { "id": "go2-aspen-a" },
         "cellularRouter": { "id": "router-aspen-a" },
         "securityPayloadRpi": {
           "id": "payload-aspen-a",
-          "source": "rpi://payload-aspen-a",
           "sensors": ["camera", "speaker", "mic", "lights"]
         },
         "dogHouseRpi": { "id": "house-aspen-a" }
@@ -25,11 +24,10 @@
       "name": "Ranger",
       "propertyId": "prop-cedar",
       "components": {
-        "robot": { "id": "go2-cedar-a", "source": "robot-api://go2-cedar-a" },
+        "robot": { "id": "go2-cedar-a" },
         "cellularRouter": { "id": "router-cedar-a" },
         "securityPayloadRpi": {
           "id": "payload-cedar-a",
-          "source": "rpi://payload-cedar-a",
           "sensors": ["camera", "speaker", "mic", "lights"]
         },
         "dogHouseRpi": { "id": "house-cedar-a" }

@@ -1,8 +1,9 @@
-# Undaunted — SWE Technical Assessment Starter
+# Undaunted — SWE Assessment Starter (Part 2)
 
-A boilerplate Next.js app so you can spend your hour on the **architecture and
-logic**, not on scaffolding. Everything here is a starting point — restructure,
-rename, or replace anything you like.
+A starter Next.js app for the technical build. Scaffolding is cheap with AI, so
+this isn't a typing test — we're scoring the **decisions**: how you model state,
+where you put boundaries, and what you do when the environment misbehaves.
+Restructure, rename, or replace anything here.
 
 ## Prerequisites
 
@@ -17,67 +18,52 @@ npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). It runs with **zero
-configuration** — with no database configured it falls back to the bundled
-sample dataset in [`src/data/sample-robots.json`](src/data/sample-robots.json).
+configuration** — with no Supabase configured it falls back to the bundled seed
+in [`src/data/sample-robots.json`](src/data/sample-robots.json). Connection
+details for the Robot Status API and Supabase are provided at the start of the
+segment (set them in `.env.local`, see [.env.example](.env.example)).
 
-## The task (Part 2)
+## What you're given
 
-Build one end-to-end vertical slice of the monitoring system. We care far more
-about *how* you structure it than how many features you finish.
+- **This dashboard template** — renders an empty robot status view, ready to wire up.
+- **Supabase** — for the seed data and to persist your computed status.
+- **Robot Status API** — two endpoints with different cost profiles:
+  - `GET /heartbeat` — cheap, safe to call frequently. Per-component connectivity per robot.
+  - `GET /telemetry` — expensive. Battery, temperature, sensor detail. **Rate-limited (429s) and occasionally slow.**
+- **Static seed data** — robots and their property/location.
+
+## Core task — the floor
 
 Build a service that:
 
-1. Pulls status for all four component types — **robot**, **cellular router**,
-   **security payload RPi (+ sensors)**, and **dog house RPi** — drawing live
-   data from the RPi/robot API and the rest from the static DB.
-2. Aggregates each robot's component states into a single, robot-level answer:
-   **is this robot online?**
-3. Exposes that result somehow — an API endpoint, a CLI, a minimal UI, your call.
+1. **Polls** the status endpoints for all four component types — robot, cellular
+   router, security payload RPi (+ sensors), dog house RPi.
+2. **Normalizes** the data into a consistent internal shape.
+3. **Decides**, per robot, whether it is **online** — and persists the latest result to Supabase.
+4. **Displays** the result on this dashboard.
 
-Defining what state each component must be in for a robot to count as "online"
-is part of the task. Make your logic explicit.
-
-### Data sources
-
-- **Static "DB"** — robot registry + locations. Bundled here as sample JSON;
-  optionally backed by Supabase (see below).
-- **Live RPi ("Undaunted RPi")** — a live device you **poll** over HTTP (it does
-  not push). Connection details are provided at the start of the segment.
-- **Robot API** — two endpoints: one cheap/frequent, one resource-intensive
-  (battery, temperature, etc.).
-
-### Stretch goals (only after the core works)
-
-- Surface the *reason* a robot is offline (which component failed).
-- Handle a live source being unreachable without crashing the whole view.
-- Sketch (in code or comments) where automated alerting would hook in.
-- Support more than one robot / property.
-
-You are not expected to finish these — we're interested in how you leave room
-for them.
+**Done =** the dashboard shows online/offline for the two seed robots, and the
+"online" rule is explicit and documented in code. Defining what "online" *means*
+is part of the task — reuse the definition you designed in Part 1 (architecture).
 
 ## Where to build
 
 | File | What's there | What to do |
 | --- | --- | --- |
-| [`src/lib/types.ts`](src/lib/types.ts) | Domain types | Extend as needed |
-| [`src/lib/db.ts`](src/lib/db.ts) | Reads the static registry (sample JSON or Supabase) | Use as-is or adapt |
-| [`src/lib/sources.ts`](src/lib/sources.ts) | **Stubs** for the live RPi + robot API | **Implement** |
-| [`src/lib/status.ts`](src/lib/status.ts) | **Stub** for the online/offline aggregation | **Implement (core task)** |
-| [`src/app/api/status/route.ts`](src/app/api/status/route.ts) | A starter API route | Make it return real status |
-| [`src/app/page.tsx`](src/app/page.tsx) | Dashboard shell listing robots | Surface status here if you want a UI |
+| [`src/lib/types.ts`](src/lib/types.ts) | Domain + raw API types | Extend / define your internal model |
+| [`src/lib/api.ts`](src/lib/api.ts) | **Stubs** for `/heartbeat` + `/telemetry` | **Implement** (cadence, caching, backoff are yours) |
+| [`src/lib/normalize.ts`](src/lib/normalize.ts) | **Stub** for raw → internal shape | **Implement** |
+| [`src/lib/status.ts`](src/lib/status.ts) | **Stub** for the online/offline rule | **Implement (core)** |
+| [`src/lib/db.ts`](src/lib/db.ts) | Seed reads + persistence stubs | Implement save/read of latest status |
+| [`src/app/api/status/route.ts`](src/app/api/status/route.ts) | Starter API route | Make it return real status |
+| [`src/app/page.tsx`](src/app/page.tsx) | Empty status view | Surface status here |
 
-## Optional: use Supabase instead of the sample data
+## Scope reliefs (so the time is real)
 
-The app uses Supabase automatically if these env vars are set; otherwise it
-falls back to the sample JSON.
-
-```bash
-cp .env.example .env.local
-# then fill in:
-#   NEXT_PUBLIC_SUPABASE_URL
-#   NEXT_PUBLIC_SUPABASE_ANON_KEY
-```
+- Real scheduling infra is **not** required — a `setInterval` loop or an
+  on-demand refresh is fine. How you'd schedule it in prod matters more than building a scheduler.
+- Persisting **latest** status is core; status **history** is optional.
+- No cloud deploy — runs locally.
 
 ## Scripts
 
