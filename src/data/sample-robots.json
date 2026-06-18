@@ -1,0 +1,39 @@
+{
+  "_comment": "Sample static 'DB' — robot registry + locations. This is the data that lives in Supabase. It is intentionally static and does NOT contain live status; pull that from the live RPi and robot API. The app falls back to this file when Supabase env vars are not configured.",
+  "properties": [
+    { "id": "prop-aspen", "name": "Aspen Ridge", "address": "1200 Summit Way" },
+    { "id": "prop-cedar", "name": "Cedar Hollow", "address": "55 Old Mill Rd" }
+  ],
+  "robots": [
+    {
+      "id": "robot-01",
+      "name": "Scout",
+      "propertyId": "prop-aspen",
+      "components": {
+        "robot": { "id": "go2-aspen-a", "source": "robot-api://go2-aspen-a" },
+        "cellularRouter": { "id": "router-aspen-a" },
+        "securityPayloadRpi": {
+          "id": "payload-aspen-a",
+          "source": "rpi://payload-aspen-a",
+          "sensors": ["camera", "speaker", "mic", "lights"]
+        },
+        "dogHouseRpi": { "id": "house-aspen-a" }
+      }
+    },
+    {
+      "id": "robot-02",
+      "name": "Ranger",
+      "propertyId": "prop-cedar",
+      "components": {
+        "robot": { "id": "go2-cedar-a", "source": "robot-api://go2-cedar-a" },
+        "cellularRouter": { "id": "router-cedar-a" },
+        "securityPayloadRpi": {
+          "id": "payload-cedar-a",
+          "source": "rpi://payload-cedar-a",
+          "sensors": ["camera", "speaker", "mic", "lights"]
+        },
+        "dogHouseRpi": { "id": "house-cedar-a" }
+      }
+    }
+  ]
+}
