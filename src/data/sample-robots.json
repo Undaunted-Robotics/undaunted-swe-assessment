@@ -1,37 +1,10 @@
 {
-  "_comment": "Sample static seed — robot registry + locations. Mirrors the data seeded into Supabase. Static and status-free: live status comes from the Robot Status API (/heartbeat, /telemetry). The app falls back to this file when Supabase env vars are not set. NOTE: a third robot with a different sensor schema is introduced by the interviewer mid-session; it is intentionally NOT seeded here.",
+  "_comment": "Static registry fallback — used when Supabase env vars are unset. Mirrors the FLOOR seed (supabase/seed/01_floor.sql): the two always-on robots and their property, with IDs matching the Robot Status API. Static and status-free: live status comes from the API (/heartbeat, /telemetry). Add-on robots (robot-3 curveball, prop-2 scale) are introduced live via the API admin toggles and are intentionally NOT in the registry.",
   "properties": [
-    { "id": "prop-aspen", "name": "Aspen Ridge", "address": "1200 Summit Way" },
-    { "id": "prop-cedar", "name": "Cedar Hollow", "address": "55 Old Mill Rd" }
+    { "id": "prop-1", "name": "Lakewood Industrial" }
   ],
   "robots": [
-    {
-      "id": "robot-01",
-      "name": "Scout",
-      "propertyId": "prop-aspen",
-      "components": {
-        "robot": { "id": "go2-aspen-a" },
-        "cellularRouter": { "id": "router-aspen-a" },
-        "securityPayloadRpi": {
-          "id": "payload-aspen-a",
-          "sensors": ["camera", "speaker", "mic", "lights"]
-        },
-        "dogHouseRpi": { "id": "house-aspen-a" }
-      }
-    },
-    {
-      "id": "robot-02",
-      "name": "Ranger",
-      "propertyId": "prop-cedar",
-      "components": {
-        "robot": { "id": "go2-cedar-a" },
-        "cellularRouter": { "id": "router-cedar-a" },
-        "securityPayloadRpi": {
-          "id": "payload-cedar-a",
-          "sensors": ["camera", "speaker", "mic", "lights"]
-        },
-        "dogHouseRpi": { "id": "house-cedar-a" }
-      }
-    }
+    { "id": "robot-1", "name": "Scout Alpha", "propertyId": "prop-1" },
+    { "id": "robot-2", "name": "Scout Beta", "propertyId": "prop-1" }
   ]
 }

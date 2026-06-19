@@ -9,35 +9,34 @@
 
 /** The four component types that make up one deployed robot. */
 export type ComponentKind =
-  | "robot" // the Unitree Go2 quadruped itself
-  | "cellularRouter" // OpenWRT router in the security payload
-  | "securityPayloadRpi" // Raspberry Pi in the payload (+ sensors)
-  | "dogHouseRpi"; // Raspberry Pi controlling the charging dog house
+    | "robot" // the Unitree Go2 quadruped itself
+    | "cellularRouter" // OpenWRT router in the security payload
+    | "securityPayloadRpi" // Raspberry Pi in the payload (+ sensors)
+    | "dogHouseRpi"; // Raspberry Pi controlling the charging dog house
 
 /** Sensors attached to the security payload RPi. */
 export type SensorKind = "camera" | "speaker" | "mic" | "lights";
 
 /** A property/site where robots are deployed. */
 export interface Property {
-  id: string;
-  name: string;
-  address?: string;
+    id: string;
+    name: string;
+    address?: string;
 }
 
 /**
- * Static registry data (seeded into Supabase): what hardware exists and where.
- * It does NOT contain live status — you pull that from the Robot Status API.
+ * Static registry data (seeded into Supabase): which robots exist and where.
+ * It does NOT contain live status, nor the component/sensor breakdown — you
+ * discover those from the Robot Status API (/heartbeat reports each component's
+ * connectivity; /telemetry reports sensors).
+ *
+ * NOTE: the Supabase column is `property_id` (snake_case); this field is
+ * camelCase. Map between them in the data layer (see src/lib/db.ts).
  */
 export interface RobotRecord {
-  id: string;
-  name: string;
-  propertyId: string;
-  components: {
-    robot: { id: string };
-    cellularRouter: { id: string };
-    securityPayloadRpi: { id: string; sensors: SensorKind[] };
-    dogHouseRpi: { id: string };
-  };
+    id: string;
+    name: string;
+    propertyId: string;
 }
 
 /* ------------------------------------------------------------------ *
@@ -49,30 +48,30 @@ export interface RobotRecord {
 
 /** GET /heartbeat — cheap, safe to call frequently. Per-component connectivity. */
 export interface HeartbeatResponse {
-  robots: HeartbeatRobot[];
+    robots: HeartbeatRobot[];
 }
 
 export interface HeartbeatRobot {
-  robotId: string;
-  /** True while the robot is out on patrol — the dog house RPi disconnects by
-   *  design in this state, so its disconnect is intentional, not a fault. */
-  onPatrol?: boolean;
-  /** Connectivity per component, e.g. { robot: true, dogHouseRpi: false }. */
-  components: Partial<Record<ComponentKind, boolean>>;
+    robotId: string;
+    /** True while the robot is out on patrol — the dog house RPi disconnects by
+     *  design in this state, so its disconnect is intentional, not a fault. */
+    onPatrol?: boolean;
+    /** Connectivity per component, e.g. { robot: true, dogHouseRpi: false }. */
+    components: Partial<Record<ComponentKind, boolean>>;
 }
 
 /** GET /telemetry — expensive, rate-limited (429s), occasionally slow. */
 export interface TelemetryResponse {
-  robots: TelemetryRobot[];
+    robots: TelemetryRobot[];
 }
 
 export interface TelemetryRobot {
-  robotId: string;
-  battery?: number;
-  temperatureC?: number;
-  sensors?: Partial<Record<SensorKind, string>>;
-  /** Curveball robots may carry extra fields (e.g. location). Don't assume. */
-  [key: string]: unknown;
+    robotId: string;
+    battery?: number;
+    temperatureC?: number;
+    sensors?: Partial<Record<SensorKind, string>>;
+    /** Curveball robots may carry extra fields (e.g. location). Don't assume. */
+    [key: string]: unknown;
 }
 
 /* ------------------------------------------------------------------ *
@@ -81,22 +80,22 @@ export interface TelemetryRobot {
 
 /** Normalized live status of a single component. */
 export interface ComponentStatus {
-  kind: ComponentKind;
-  id: string;
-  /** Could we reach/confirm this component at all? */
-  reachable: boolean;
-  /** Free-form normalized metrics (battery, temperature, sensor states, ...). */
-  metrics?: Record<string, unknown>;
-  /** ISO timestamp of the last successful read. */
-  lastSeen?: string;
+    kind: ComponentKind;
+    id: string;
+    /** Could we reach/confirm this component at all? */
+    reachable: boolean;
+    /** Free-form normalized metrics (battery, temperature, sensor states, ...). */
+    metrics?: Record<string, unknown>;
+    /** ISO timestamp of the last successful read. */
+    lastSeen?: string;
 }
 
 /** The robot-level answer the system exists to produce. Persisted to Supabase. */
 export interface RobotStatus {
-  robotId: string;
-  online: boolean;
-  /** Which component(s) caused the robot to be offline (add-on). */
-  offlineReasons?: string[];
-  components: ComponentStatus[];
-  updatedAt: string;
+    robotId: string;
+    online: boolean;
+    /** Which component(s) caused the robot to be offline (add-on). */
+    offlineReasons?: string[];
+    components: ComponentStatus[];
+    updatedAt: string;
 }

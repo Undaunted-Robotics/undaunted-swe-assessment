@@ -9,21 +9,21 @@ import type { Property, RobotRecord, RobotStatus } from "@/lib/types";
  * your seeded schema if you wire up Supabase.
  */
 export async function getRobots(): Promise<RobotRecord[]> {
-  const supabase = getSupabase();
-  if (!supabase) return sample.robots as RobotRecord[];
+    const supabase = getSupabase();
+    if (!supabase) return sample.robots as RobotRecord[];
 
-  const { data, error } = await supabase.from("robots").select("*");
-  if (error) throw error;
-  return (data ?? []) as RobotRecord[];
+    const { data, error } = await supabase.from("robots").select("*");
+    if (error) throw error;
+    return (data ?? []) as RobotRecord[];
 }
 
 export async function getProperties(): Promise<Property[]> {
-  const supabase = getSupabase();
-  if (!supabase) return sample.properties as Property[];
+    const supabase = getSupabase();
+    if (!supabase) return sample.properties as Property[];
 
-  const { data, error } = await supabase.from("properties").select("*");
-  if (error) throw error;
-  return (data ?? []) as Property[];
+    const { data, error } = await supabase.from("properties").select("*");
+    if (error) throw error;
+    return (data ?? []) as Property[];
 }
 
 /**
@@ -32,17 +32,17 @@ export async function getProperties(): Promise<Property[]> {
  * the pipeline still runs locally.
  */
 export async function saveRobotStatus(status: RobotStatus): Promise<void> {
-  const supabase = getSupabase();
-  if (!supabase) return;
+    const supabase = getSupabase();
+    if (!supabase) return;
 
-  void status;
-  throw new Error("Not implemented: upsert the latest status into Supabase");
+    void status;
+    throw new Error("Not implemented: upsert the latest status into Supabase");
 }
 
 /** Reads back the latest persisted statuses to render on the dashboard. */
 export async function getLatestStatuses(): Promise<RobotStatus[]> {
-  const supabase = getSupabase();
-  if (!supabase) return [];
+    const supabase = getSupabase();
+    if (!supabase) return [];
 
-  throw new Error("Not implemented: read latest statuses from Supabase");
+    throw new Error("Not implemented: read latest statuses from Supabase");
 }
