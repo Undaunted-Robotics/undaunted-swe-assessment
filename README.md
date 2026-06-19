@@ -13,8 +13,9 @@ Restructure, rename, or replace anything here.
 ## Quick start
 
 ```bash
-npm install
-npm run dev
+git clone https://github.com/chrisozgo99/undaunted-swe-assessment
+cd undaunted-swe-assessment
+npm install && npm run dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000). It runs with **zero
