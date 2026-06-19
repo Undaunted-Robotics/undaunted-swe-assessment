@@ -13,7 +13,7 @@ Restructure, rename, or replace anything here.
 ## Quick start
 
 ```bash
-git clone https://github.com/chrisozgo99/undaunted-swe-assessment
+git clone git@github.com:Undaunted-Robotics/undaunted-swe-assessment.git
 cd undaunted-swe-assessment
 npm install && npm run dev
 ```
